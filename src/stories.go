@@ -4,7 +4,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 	"strings"
+	// "fmt"
 )
 
 func getStories(username string) []string {
@@ -30,17 +33,36 @@ func fetchStoriesPage(username string) string {
 	}
 	defer response.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	bodyString := string(bodyBytes)
-	return bodyString
+	htmlBody, _ := ioutil.ReadAll(response.Body)
+	htmlString := string(htmlBody)
+	return htmlString
 }
 
-func parseFromHTML(html string) []string {
+func parseFromHTML(htmlPage string) []string {
 	var storiesLinks []string
 
-	return storiesLinks
+	tokenizer := html.NewTokenizer(strings.NewReader(htmlPage))
+	for {
+		tokenType := tokenizer.Next()
+		switch {
+		case tokenType == html.ErrorToken:
+			return storiesLinks
+		case tokenType == html.StartTagToken:
+			token := tokenizer.Token()
+			if token.DataAtom == atom.A {
+				for _, attr := range token.Attr {
+					if attr.Key == "href" {
+						clearURLAndInsert(&attr.Val, &storiesLinks)
+					}
+				}
+			}
+		}	
+	}	
+}
+
+func clearURLAndInsert(rawURL *string, slice *[]string) {
+	if strings.HasPrefix(*rawURL, "https") {
+		url := strings.Split(*rawURL,  "?")[0]
+		*slice = append(*slice, url)
+	}
 }

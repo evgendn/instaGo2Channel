@@ -60,7 +60,6 @@ func parseFromHTML(htmlPage string) []string {
 	}	
 }
 
-
 func clearURLAndInsert(rawURL *string, slice *[]string) {
 	if strings.HasPrefix(*rawURL, "https") {
 		url := strings.Split(*rawURL,  "?")[0]
@@ -68,27 +67,38 @@ func clearURLAndInsert(rawURL *string, slice *[]string) {
 	}
 }
 
+// Links inludes url photos and videos, also video has preview.
+// This function returns only photo and video, exclude preview.
 func findOriginalStories(urls *[]string) []string {
 	var result []string
 	if len(*urls) == 1 {
 		result = append(result, (*urls)[0])
 	}
+
 	for i := 0; i < len(*urls) - 1; i++ {
-		// Scary fucking shit.
-		index := tryFindVideoIndex(&((*urls)[i]), &((*urls)[i + 1]), &i)
+		index := i
+		if containsVideo(&(*urls)[i], &(*urls)[i + 1]) {
+			index = i + 1;			
+			
+			// The site give maximum 3 video links.
+			offset := 1;
+			for offset < 3 {
+				if strings.HasSuffix((*urls)[index + offset], "mp4") {
+					offset++
+				} else {
+					break
+				}
+			}
+			i = index + (offset - 1)
+		}
 		result = append(result, (*urls)[index])
 	}
 	return result
 }
 
-// Video has preview above as jpg format.
-// First checking two adjacent items of slice and change index by 3 because 
-// site that parsed has 3 videos different resolution for one stories. 
-func tryFindVideoIndex(url1, url2 *string, i *int) int {
-	j := *i
+func containsVideo(url1, url2 *string) bool {
 	if strings.HasSuffix(*url1, "jpg") && strings.HasSuffix(*url2, "mp4") {
-		j++
-		*i += 3
+		return true
 	}
-	return j
-} 
+	return false
+}

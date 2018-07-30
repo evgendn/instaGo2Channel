@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -93,6 +94,7 @@ func findOriginalStories(urls *[]string) []string {
 		}
 		result = append(result, (*urls)[index])
 	}
+
 	return result
 }
 

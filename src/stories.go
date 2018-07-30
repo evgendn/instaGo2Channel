@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -84,6 +83,9 @@ func findOriginalStories(urls *[]string) []string {
 			// The site give maximum 3 video links.
 			offset := 1;
 			for offset < 3 {
+				if index + offset <= len(*urls) {
+					return append(result, (*urls)[index])
+				}
 				if strings.HasSuffix((*urls)[index + offset], "mp4") {
 					offset++
 				} else {

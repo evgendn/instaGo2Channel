@@ -132,7 +132,7 @@ func TestFetchStories1(t *testing.T) {
 		"https://someurl.com/video250.mp4",
 	}
 	expected := [5]string {
-		"https://someurl.com/photo.jpg",
+		"https://someurl.com/photo1.jpg",
 		"https://someurl.com/video250.mp4",
 		"https://someurl.com/photo2.jpg",
 		"https://someurl.com/photo3.jpg",

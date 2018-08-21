@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-*Go_build
+*Go_*
 
 # Test binary, build with `go test -c`
 *.test
@@ -14,3 +14,10 @@
 
 .idea
 debug
+
+*.db
+
+*.jpg
+*.mp4
+
+config*

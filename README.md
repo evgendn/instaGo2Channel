@@ -1,4 +1,4 @@
-# InstaGo2Channel
+# InstaGo2Channel v0.1
 
 This project allows crossposting stories from instagram to telegram channel, including photos and videos.
 
@@ -6,11 +6,12 @@ This project allows crossposting stories from instagram to telegram channel, inc
 
 ## How to
 
-1. Set environment variables
+1. Set crontab config, every 12 hours 
 ```sh
-export NICKNAME="Instagram username"
-export ACCESS_TOKEN="Telegram bot access token"
-export CHANNEL_NAME="Telegram channel name"
+NICKNAME="Instagram username"
+ACCESS_TOKEN="Telegram bots access token"
+CHANNEL_NAME="@TelegramChannelName"
+* */12 * * * cd ~/Path/to/bin/file && ./Go_Run
 ```
 2. Create sqlite db and name it "instaGo2Channel.db"
 ```sql
@@ -22,3 +23,8 @@ CREATE TABLE "info" (
 )
 ```
 3. For database tests you have to create the same table, but name it "info_test"
+
+## To Do List
+- [x] Add cron task
+- [ ] Remove media after sending to telegram 
+- [ ] Add goroutines

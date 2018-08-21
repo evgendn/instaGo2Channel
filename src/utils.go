@@ -6,13 +6,11 @@ import (
 	"net/http"
 	"io"
 	"os"
+	"hash/crc32"
 )
 
 func downloadMedia(url string) (err error) {
-	splittedURL := strings.Split(url, "/")
-	filename := splittedURL[len(splittedURL) - 1]
-
-	file, err := os.Create(filename)
+	file, err := os.Create(getNameFromURL(url))
 	if err != nil {
 		return err
 	}
@@ -34,4 +32,28 @@ func downloadMedia(url string) (err error) {
 	}
 
 	return nil
+}
+
+func getNameFromURL(url string) string {
+	splittedURL := strings.Split(url, "/")
+	filename := splittedURL[len(splittedURL) - 1]
+	return filename
+}
+
+func hashingName(url string) uint32 {
+	name := getNameFromURL(url)
+	hashedName := crc32.ChecksumIEEE([]byte(name))
+	return hashedName
+}
+
+func getFileFormat(filename string) string {
+	splittedName := strings.Split(filename, ".")
+	fileFormat := splittedName[len(splittedName) - 1]
+	return fileFormat
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

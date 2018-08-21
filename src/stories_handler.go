@@ -9,10 +9,15 @@ import (
 	"strings"
 )
 
-func getStoriesLinks(username string) []string {
+type Stories struct {
+	username string
+	urls []string
+}
+
+func getStories(username string) *Stories {
 	htmlPage :=	fetchStoriesPage(username)
 	storiesLinks := parseFromHTML(htmlPage)
-	return storiesLinks
+	return &Stories{username, storiesLinks}
 }
 
 func fetchStoriesPage(username string) string {
@@ -93,6 +98,10 @@ func findOriginalStories(urls *[]string) []string {
 				}
 			}
 			i = index + (offset - 1)
+		} else {
+			if i == len(*urls) - 2 {
+				result = append(result, (*urls)[i + 1])
+			}
 		}
 		result = append(result, (*urls)[index])
 	}

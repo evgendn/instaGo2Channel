@@ -10,43 +10,52 @@ import (
 type DBTuple struct {
 	username   string
 	url        string
-	hashedName int
+	hashedName uint32
 }
 
-func pasteIntoDB(db *sql.DB, stories *Stories){
-	fetchedTuples := fetchAllByUserName(db, stories.username)
-	hashedNames := hashingNames(stories.urls)
+func storiesNotExist(db *sql.DB, dbTuple *DBTuple) bool {
+	fetchedTuples := fetchAllByUserName(db, dbTuple.username)
+	hashedName := hashingName(dbTuple.url)
+	dbTuple.hashedName = hashedName
 
-	counter := 0
-	for i, hashedName := range hashedNames {
-		counter = 0
-		for _, tuple := range *fetchedTuples {
-			if int(hashedName) != tuple.hashedName {
-				counter++
-			}
-		}
-		if counter == len(*fetchedTuples) {
-			inst, err := db.Prepare("INSERT INTO info(username, url, hashed_name) values(?,?,?)")
-			checkErr(err)
-			_, err = inst.Exec(stories.username, stories.urls[i], hashedName)
-			checkErr(err)
+	hits := 0
+	for _, tuple := range *fetchedTuples {
+		if hashedName != tuple.hashedName {
+			hits++
 		}
 	}
+
+	if hits == len(*fetchedTuples) {
+		return true
+	}
+	return false
+}
+
+func pasteIntoDB(db *sql.DB, dbTuple *DBTuple) {
+	inst, err := db.Prepare("INSERT INTO info(username, url, hashed_name) values(?,?,?)")
+	checkErr(err)
+
+	username := dbTuple.username
+	url := dbTuple.url
+	hashedName := dbTuple.hashedName
+
+	_, err = inst.Exec(username, url, hashedName)
+	checkErr(err)
 }
 
 func fetchAllByUserName(db *sql.DB, userName string) *[]DBTuple {
 	var fetchedTuples []DBTuple
 
-	queryString := fmt.Sprintf("SELECT * FROM info WHERE username=\"%s\"", userName)
+	queryString := fmt.Sprintf("SELECT username, url, hashed_name FROM info WHERE username=\"%s\"", userName)
 	query, err := db.Query(queryString)
 	checkErr(err)
-	var id int
+
 	var username string
 	var url string
-	var hashedName int
+	var hashedName uint32
 
 	for query.Next() {
-		err = query.Scan(&id, &username, &url, &hashedName)
+		err = query.Scan(&username, &url, &hashedName)
 		checkErr(err)
 		fetchedTuples = append(fetchedTuples, DBTuple{username, url, hashedName})
 	}

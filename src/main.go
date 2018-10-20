@@ -40,6 +40,10 @@ func main() {
 				} else if fileFormat == "mp4" {
 					sendVideo(bot, filename, "#stories")
 				}
+				
+				if err := os.Remove(filename); err != nil {
+       					panic(err)
+    				}
 			}
 		}
 	}

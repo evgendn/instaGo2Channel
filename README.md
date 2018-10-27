@@ -29,8 +29,3 @@ CREATE TABLE "info" (
 )
 ```
 4. For database tests you have to create the same table, but name it "info_test"
-
-## To Do List
-- [x] Add cron task
-- [ ] Remove media after sending to telegram 
-- [ ] Add goroutines

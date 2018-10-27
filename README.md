@@ -29,3 +29,10 @@ CREATE TABLE "info" (
 )
 ```
 4. For database tests you have to create the same table, but name it "info_test"
+```sql
+CREATE TABLE "info_test" (
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    "username" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "hashed_name" INTEGER NOT NULL
+)

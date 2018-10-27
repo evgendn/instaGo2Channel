@@ -12,7 +12,7 @@ go get github.com/mattn/go-sqlite3
 go get -u github.com/go-telegram-bot-api/telegram-bot-api
 ```
 
-2. Set crontab config, every 12 hours 
+2. Write crontab config, this one is running every 12 hours 
 ```sh
 NICKNAME="Instagram username"
 ACCESS_TOKEN="Telegram bots access token"
